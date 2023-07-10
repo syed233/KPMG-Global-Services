@@ -1,11 +1,117 @@
 Challenge #1
-A 3-tier environment is a common setup. Use a tool of your choosing/familiarity create these resources on a cloud environment (Azure/AWS/GCP). Please remember we will not be judged on the outcome but more focusing on the approach, style and reproducibility.
+A 3-tier environment is a common setup. Use a tool of your choosing/familiarity to create these resources in a cloud environment (Azure/AWS/GCP). Please remember we will not be judged on the outcome but more focusing on the approach, style and reproducibility.
 
 
 Please find my response below.
-We can use Terraform to achive the above requirement. Please find the steps to be followed for achieving the same.
+We can use Terraform to achieve the above requirement. Please find the steps to be followed for achieving the same.
 1. Install terraform (using yum or apt-get install)
 2. mkdir terraform
 3. cd terraform
 4. vim 3_tier.tf
-5. 
+5. In the provider variable, use the values such as aws,azurerm,google for AWS, Azure and GCP.
+# Provider configuration
+provider "aws/google/azurerm"
+6. Provide details in the file such as VPC, subnet, security group, load balancer, network, firewall, etc.,  Configuration, 
+7. Initialize terraform using command "terraform init"
+8. If you want to verify you can use command "terraform plan"
+9. To create resources, run command "terraform apply"
+
+================================================================================================================================================================================================================================================
+
+
+Challenge #2
+We need to write code that will query the metadata of an instance within AWS or Azure or GCP and provide a json formatted output.
+The choice of language and implementation is up to you.
+Bonus Points
+The code allows for a particular data key to be retrieved individually
+Hints
+· Aws Documentation (https://docs.aws.amazon.com/)
+· Azure Documentation (https://docs.microsoft.com/en-us/azure/?product=featured)
+· Google Documentation (https://cloud.google.com/docs)
+
+
+
+import json
+import requests
+
+# AWS Metadata
+def get_aws_metadata():
+    url = 'http://169.254.169.254/latest/meta-data/'
+    response = requests.get(url)
+    data = response.text.split('\n')
+    metadata = {}
+    for item in data:
+        item_url = url + item
+        item_response = requests.get(item_url)
+        if item_response.status_code == 200:
+            metadata[item] = item_response.text
+    return metadata
+
+# Azure Metadata
+def get_azure_metadata():
+    url = 'http://169.254.169.254/metadata/instance?api-version=2021-02-01'
+    headers = {'Metadata': 'true'}
+    response = requests.get(url, headers=headers)
+    metadata = response.json()
+    return metadata
+
+# GCP Metadata
+def get_gcp_metadata():
+    url = 'http://metadata.google.internal/computeMetadata/v1/?recursive=true&alt=json'
+    headers = {'Metadata-Flavor': 'Google'}
+    response = requests.get(url, headers=headers)
+    metadata = response.json()
+    return metadata
+
+# Retrieve metadata based on the cloud provider
+def retrieve_metadata(provider):
+    if provider == 'aws':
+        metadata = get_aws_metadata()
+    elif provider == 'azure':
+        metadata = get_azure_metadata()
+    elif provider == 'gcp':
+        metadata = get_gcp_metadata()
+    else:
+        metadata = {}
+    return metadata
+
+# Main function
+def main():
+    provider = input("Enter the cloud provider (aws/azure/gcp): ")
+    metadata = retrieve_metadata(provider)
+    json_output = json.dumps(metadata, indent=4)
+    print(json_output)
+
+if __name__ == '__main__':
+    main()
+
+
+================================================================================================================================================================================================================================================
+Challenge #3
+We have a nested object. We would like a function where you pass in the object and a key and
+get back the value.
+The choice of language and implementation is up to you.
+Example Inputs
+object = {“a”:{“b”:{“c”:”d”}}}
+key = a/b/c
+object = {“x”:{“y”:{“z”:”a”}}}
+key = x/y/z
+value = a
+
+
+
+function getValueFromNestedObject(object, key) {
+  const keys = key.split('/');
+  let value = object;
+
+  for (const k of keys) {
+    if (value.hasOwnProperty(k)) {
+      value = value[k];
+    } else {
+      value = undefined;
+      break;
+    }
+  }
+
+  return value;
+}
