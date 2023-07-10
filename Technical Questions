@@ -1,0 +1,11 @@
+Challenge #1
+A 3-tier environment is a common setup. Use a tool of your choosing/familiarity create these resources on a cloud environment (Azure/AWS/GCP). Please remember we will not be judged on the outcome but more focusing on the approach, style and reproducibility.
+
+
+Please find my response below.
+We can use Terraform to achive the above requirement. Please find the steps to be followed for achieving the same.
+1. Install terraform (using yum or apt-get install)
+2. mkdir terraform
+3. cd terraform
+4. vim 3_tier.tf
+5. 
